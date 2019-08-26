@@ -9,11 +9,11 @@ def clear_boot_magic():
     rtc.write(0,0)
     rtc.write(1,0)
 
-def reboot(goHome=True):
-    if goHome:
-        home()
-    else:
-        machine.deepsleep(2)
+def reboot():
+	import rgb, time
+	rgb.clear()
+	time.sleep(1 / 20  * 1.1)  # 110% of the time of one render frame
+	machine.deepsleep(2)
 
 def sleep(duration=0, status=False):
     if (duration >= 86400000): #One day
@@ -45,13 +45,13 @@ def isWakeup(fromTimer=True,fromButton=True, fromIr=True, fromUlp=True):
 # Application launching
 
 def start(app, status=True):
-    if status:
-        if app == "" or app == "launcher":
-            term.header(True, "Loading menu...")
-        else:
-            term.header(True, "Loading application "+app+"...")
-    machine.RTC().write_string(app)
-    machine.deepsleep(2)
+	if status:
+		if app == "" or app == "launcher":
+			term.header(True, "Loading menu...")
+		else:
+			term.header(True, "Loading application "+app+"...")
+	machine.RTC().write_string(app)
+	reboot()
 
 def home(status=False):
     start("", status)

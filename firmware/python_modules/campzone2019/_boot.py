@@ -1,4 +1,4 @@
-import uos, gc, sys, system, virtualtimers, machine
+import uos, gc, sys, system, virtualtimers
 
 folders = ['lib', 'apps', 'cache', 'cache/woezel', 'config']
 for folder in folders:
@@ -7,19 +7,8 @@ for folder in folders:
     except Exception as error:
         pass
 
-# This doesn't work in micropython/main.c because micropython can't handle
-# slash characters before single characters that are also HTML elements,
-# like <a> or <s> (e.g. /apps or /sdcard won't work.)
-sys.path.append('apps')
-
-# Hijack the system start function to fix some CZ19 screen issues
-orig_start = system.start
-def hijacked_start(app, status=True):
-    import rgb, time
-    rgb.clear()
-    time.sleep(1 / 20  * 1.1)  # 110% of the time of one render frame
-    orig_start(app, status)
-system.start = hijacked_start
+del folders, uos
+gc.collect()
 
 ## Make badge sleep in undervoltage conditions
 virtualtimers.activate(1000) # low resolution needed
@@ -36,10 +25,3 @@ def _vcc_callback():
         return 10000
 
 virtualtimers.new(10000, _vcc_callback, hfpm=True)
-
-## Dirty fix for upgrade path of existing CZ19 badges
-if machine.nvs_getint("system", 'factory_checked') == 1:
-    machine.nvs_setint("system", 'factory_checked', 2)
-
-del folders, uos
-gc.collect(); gc.mem_free()

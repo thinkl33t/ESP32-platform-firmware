@@ -1,5 +1,9 @@
-import buttons, machine
-import defines, rgb
+import buttons, machine, defines, rgb, system
+
+if machine.nvs_getint("system", 'factory_checked') == 1:
+	#Fix for badges which have been updated from before build 50
+	machine.nvs_setint("system", 'factory_checked', 2)
+	system.home()
 
 RED     = (255, 0, 0)
 GREEN   = (0, 255, 0)
