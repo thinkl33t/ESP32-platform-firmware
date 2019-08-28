@@ -2,6 +2,7 @@
 ### License: MIT
 
 import socket
+import machine
 
 NTP_DELTA = 2208988800
 NTP_HOST = "pool.ntp.org"
@@ -44,10 +45,13 @@ def set_NTP_time():
 
 	tm = time.localtime(t)
 	tm = tm[0:6]
-	
-	offset = 1
-	if tm[1] > 3 and tm[1] < 11:
-		offset = 2
+
+	offset = machine.nvs_getstr("badge", "time.offset")
+
+	if not offset:
+		offset = 1
+		if tm[1] > 3 and tm[1] < 11:
+			offset = 2
 	tm = time.localtime(t+offset*3600)
 	tm = tm[0:6]
 
